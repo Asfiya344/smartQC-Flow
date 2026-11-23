@@ -74,3 +74,95 @@ def defects_per_hour(hours: int = 24):
     ]
     return [{"hour": d["_id"], "total": d["total"], "defective": d["defective"]}
             for d in db.predictions.aggregate(pipeline)]
+
+def top_machines_by_alerts():
+    """Mengambil 5 mesin dengan jumlah alert terbanyak."""
+    db = get_db()
+
+    pipeline = [
+        {
+            "$group": {
+                "_id": "$machine_id",
+                "total_alerts": {"$sum": 1},
+            }
+        },
+        {"$sort": {"total_alerts": -1, "_id": 1}},
+        {"$limit": 5},
+        {
+            "$project": {
+                "_id": 0,
+                "machine_id": "$_id",
+                "total_alerts": 1,
+            }
+        },
+    ]
+
+    return list(db.alerts.aggregate(pipeline))
+
+
+def avg_defect_probability_by_type():
+    """Menghitung rata-rata probabilitas defect berdasarkan tipe produk L, M, H."""
+    db = get_db()
+
+    pipeline = [
+        {
+            "$lookup": {
+                "from": "sensor_logs",
+                "localField": "log_id",
+                "foreignField": "_id",
+                "as": "sensor",
+            }
+        },
+        {"$unwind": "$sensor"},
+        {
+            "$group": {
+                "_id": "$sensor.type",
+                "avg_defect_probability": {
+                    "$avg": "$defect_probability"
+                },
+                "total_predictions": {"$sum": 1},
+            }
+        },
+        {"$sort": {"_id": 1}},
+    ]
+
+    return [
+        {
+            "type": d["_id"],
+            "avg_defect_probability": round(
+                d["avg_defect_probability"], 4
+            ),
+            "total_predictions": d["total_predictions"],
+        }
+        for d in db.predictions.aggregate(pipeline)
+    ]
+
+
+def daily_anomaly_counts():
+    """Menghitung jumlah anomali setiap hari berdasarkan timestamp UTC."""
+    db = get_db()
+
+    pipeline = [
+        {"$match": {"is_anomaly": True}},
+        {
+            "$group": {
+                "_id": {
+                    "$dateToString": {
+                        "format": "%Y-%m-%d",
+                        "date": "$timestamp",
+                        "timezone": "UTC",
+                    }
+                },
+                "total_anomalies": {"$sum": 1},
+            }
+        },
+        {"$sort": {"_id": 1}},
+    ]
+
+    return [
+        {
+            "date": d["_id"],
+            "total_anomalies": d["total_anomalies"],
+        }
+        for d in db.predictions.aggregate(pipeline)
+    ]
