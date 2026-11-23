@@ -1,0 +1,5 @@
+Threshold Name,Threshold,Precision,Recall,F1-Score
+Threshold 0.40,0.4,1.0,0.7941,0.8852
+Threshold 0.50,0.5,1.0,0.7941,0.8852
+Threshold 0.70,0.7,1.0,0.7941,0.8852
+Best Threshold,0.5958,1.0,0.7941,0.8852
