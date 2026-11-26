@@ -2,11 +2,18 @@
 import os
 import pandas as pd
 
-from sklearn.model_selection import StratifiedKFold, cross_validate
+from sklearn.model_selection import (
+    StratifiedKFold,
+    cross_validate,
+    train_test_split
+)
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.ensemble import (
+    RandomForestClassifier,
+    GradientBoostingClassifier
+)
 
 from anggota2_database.data_utils import normalize_columns
 from anggota3_ml.features import build_features, FEATURES
@@ -34,7 +41,24 @@ print("Failure:", (y == 1).sum())
 
 
 # ==========================================
-# 2. MENDEFINISIKAN MODEL
+# 2. MEMBAGI DATA TRAINING DAN TESTING
+# ==========================================
+
+X_tr, X_te, y_tr, y_te = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    stratify=y,
+    random_state=42
+)
+
+print("\nPEMBAGIAN DATA:")
+print("Training:", len(X_tr))
+print("Testing :", len(X_te))
+
+
+# ==========================================
+# 3. MENDEFINISIKAN MODEL
 # ==========================================
 
 models = {
@@ -66,7 +90,8 @@ models = {
 
 
 # ==========================================
-# 3. STRATIFIED 5-FOLD CROSS VALIDATION
+# 4. STRATIFIED 5-FOLD CROSS VALIDATION
+#    HANYA PADA DATA TRAINING
 # ==========================================
 
 cv = StratifiedKFold(
@@ -84,7 +109,7 @@ scoring = {
 
 
 # ==========================================
-# 4. EVALUASI SETIAP MODEL
+# 5. EVALUASI SETIAP MODEL
 # ==========================================
 
 results = []
@@ -97,8 +122,8 @@ for model_name, model in models.items():
 
     scores = cross_validate(
         model,
-        X,
-        y,
+        X_tr,
+        y_tr,
         cv=cv,
         scoring=scoring,
         n_jobs=1,
@@ -126,14 +151,16 @@ for model_name, model in models.items():
 
 
 # ==========================================
-# 5. MENYIMPAN HASIL PERBANDINGAN
+# 6. MENYIMPAN HASIL PERBANDINGAN
 # ==========================================
 
 results_df = pd.DataFrame(results)
 
 os.makedirs("anggota3_ml/models", exist_ok=True)
 
-output_path = "anggota3_ml/models/model_comparison_cv.csv"
+output_path = (
+    "anggota3_ml/models/model_comparison_cv.csv"
+)
 
 results_df.to_csv(output_path, index=False)
 
@@ -146,4 +173,4 @@ print(results_df.round(4).to_string(index=False))
 print("\nHASIL DISIMPAN DI:")
 print(output_path)
 
-print("\nMODEL COMPARISON SELESAI!")
+print("\nCROSS-VALIDATION TRAINING SELESAI!")

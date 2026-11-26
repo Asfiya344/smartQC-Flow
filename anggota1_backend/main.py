@@ -177,3 +177,18 @@ def model_metrics():
     if not p.exists():
         raise HTTPException(404, "Model belum dilatih")
     return json.loads(p.read_text())
+
+@app.get("/stats/top-machines-by-alerts")
+def stats_top_machines_by_alerts():
+    return agg.top_machines_by_alerts()
+
+
+@app.get("/stats/avg-defect-by-type")
+def stats_avg_defect_by_type():
+    return agg.avg_defect_probability_by_type()
+
+
+@app.get("/stats/daily-anomalies")
+def stats_daily_anomalies():
+    return agg.daily_anomaly_counts()
+

@@ -1,0 +1,86 @@
+{
+    "dataset": {
+        "file": "E:\\smartqc-flow\\data\\ai4i2020.csv",
+        "total_records": 10000,
+        "normal_records": 9661,
+        "failure_records": 339,
+        "training_records": 8000,
+        "testing_records": 2000
+    },
+    "model_parameters": {
+        "n_estimators": 150,
+        "learning_rate": 0.05,
+        "max_depth": 3,
+        "random_state": 42
+    },
+    "baseline_metrics": {
+        "accuracy": 0.993,
+        "precision": 1.0,
+        "recall": 0.7941176470588235,
+        "f1": 0.8852459016393442,
+        "roc_auc": 0.9689897698209718
+    },
+    "raw_vs_engineered": [
+        {
+            "model": "Raw Features",
+            "accuracy": 0.985,
+            "precision": 0.9318181818181818,
+            "recall": 0.6029411764705882,
+            "f1": 0.7321428571428571,
+            "roc_auc": 0.9674712276214834
+        },
+        {
+            "model": "Engineered Features",
+            "accuracy": 0.993,
+            "precision": 1.0,
+            "recall": 0.7941176470588235,
+            "f1": 0.8852459016393442,
+            "roc_auc": 0.9689897698209718
+        }
+    ],
+    "sample_weight_comparison": [
+        {
+            "model": "Without Sample Weight",
+            "accuracy": 0.993,
+            "precision": 1.0,
+            "recall": 0.7941176470588235,
+            "f1": 0.8852459016393442,
+            "roc_auc": 0.9689897698209718
+        },
+        {
+            "model": "Balanced Sample Weight",
+            "accuracy": 0.957,
+            "precision": 0.43661971830985913,
+            "recall": 0.9117647058823529,
+            "f1": 0.5904761904761905,
+            "roc_auc": 0.9709840457922299
+        }
+    ],
+    "bootstrap_confidence_interval": {
+        "accuracy": {
+            "mean": 0.9930460000000001,
+            "ci_95_lower": 0.9895,
+            "ci_95_upper": 0.996
+        },
+        "precision": {
+            "mean": 1.0,
+            "ci_95_lower": 1.0,
+            "ci_95_upper": 1.0
+        },
+        "recall": {
+            "mean": 0.7954705882352942,
+            "ci_95_lower": 0.6911764705882353,
+            "ci_95_upper": 0.8823529411764706
+        },
+        "f1": {
+            "mean": 0.8852721479258981,
+            "ci_95_lower": 0.8173913043478261,
+            "ci_95_upper": 0.9375
+        },
+        "roc_auc": {
+            "mean": 0.9692256519455609,
+            "ci_95_lower": 0.9326657837047864,
+            "ci_95_upper": 0.996088897515528
+        }
+    }
+}
